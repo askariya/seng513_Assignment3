@@ -27,13 +27,15 @@ div.left{
     font-size: 1.2em;
 }
 
-div.msg-display{
+div #msg-display{
     border: 2px solid orange;
     background: #282D33;
     color: white;
     height: 100%;
     width: 100%;
     float: center;
+    overflow: auto;
+
 }
 
 div.right{
@@ -45,7 +47,7 @@ div.right{
     font-size: 1.2em;
 }
 
-div.usr-display{
+div #usr-display{
     border: 2px solid orange;
     background: #282D33;
     color: white;
@@ -83,7 +85,8 @@ form input {
 form button { 
     width: 9%; 
     height: 100%;
-    background: rgb(130, 224, 255); 
+    color: white;
+    background: #282D33; 
     border: none; 
     padding: 10px; 
 }
