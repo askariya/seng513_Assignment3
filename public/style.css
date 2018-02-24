@@ -12,33 +12,55 @@ html{
 
 body { 
     font: 13px Helvetica, Arial; 
-    border: 2px solid red;
+    border: 2px dashed red;
     height: 100%;
     width: 100%;
     /* padding: 30px; */
 }
 
-div.msg-display{
+div.left{
+    border: 2px solid green;
     height: 90%;
     width: 70%;
     float: left;
-    padding: 10px;
-    border: 2px solid green;
+    padding: 30px;
+    font-size: 1.2em;
 }
-div.usr-display{
+
+div.msg-display{
+    border: 2px solid orange;
+    background: #282D33;
+    color: white;
+    height: 100%;
+    width: 100%;
+    float: center;
+}
+
+div.right{
+    border: 2px solid blue;
     height: 90%;
     width: 30%;
     float:right;
-    padding: 10px;
-    border: 2px solid blue;
+    padding: 30px;
+    font-size: 1.2em;
 }
+
+div.usr-display{
+    border: 2px solid orange;
+    background: #282D33;
+    color: white;
+    height: 100%;
+    width: 100%;
+    float: center;
+}
+
 
 div.form{
     height: 10%;
     width: 100%;
     clear: both;
-    padding: 22px;
-    border: 2px solid green;
+    padding: 15px;
+    border: 2px solid yellow;
 }
 
 
@@ -75,6 +97,8 @@ form button {
 #messages li { 
     padding: 5px 10px; 
 }
+/*
+Code for changing background colour of every 2nd msg 
 #messages li:nth-child(odd) { 
     background: #eee;
-}
+} */
