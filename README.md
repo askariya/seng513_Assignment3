@@ -5,3 +5,6 @@ the [Getting Started](http://socket.io/get-started/chat/) guide
 of the Socket.IO website.
 
 Please refer to it to learn how to run this application.
+
+Additional Links:
+http://www.tamas.io/2013/05/19/simple-chat-application-using-node-js-and-socket-io/
