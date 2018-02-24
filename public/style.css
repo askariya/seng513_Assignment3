@@ -100,6 +100,15 @@ form button {
 #messages li { 
     padding: 5px 10px; 
 }
+
+#users { 
+    list-style-type: none; 
+    margin: 0; 
+    padding: 0; 
+}
+#users li { 
+    padding: 5px 10px; 
+}
 /*
 Code for changing background colour of every 2nd msg 
 #messages li:nth-child(odd) { 
