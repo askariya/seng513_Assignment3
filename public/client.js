@@ -11,12 +11,11 @@ $(function() {
     });
 
     socket.on('chat', function(msg){
-        updateScroll();
         $('#messages').append($('<li>').text(msg));
+        updateScroll();
     });
 
     socket.on('user_list_update', function(users){
-        $('#messages').append($('<li>').text("USERS[0]: " + users[0]));
         update_user_list(users);
     });
 
@@ -34,3 +33,5 @@ function update_user_list(users){
         $('#users').append($('<li>').text(users[user]));
     }
 }
+
+//TODO store/update chat history

@@ -26,11 +26,10 @@ io.on('connection', function(socket){
     });
 
     socket.on('chat', function(msg){
-        var dt = new Date();
-        var utcDate = dt.toLocaleTimeString(); //calculate timestamp and format
         var separator = '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0';
-        final_msg = utcDate + separator + msg;
-        console.log(socket.username);
+        var timestamp = generate_timestamp();
+        final_msg = timestamp + separator + msg;
+        //console.log(socket.username);
 	    io.emit('chat', final_msg);
     });
 
@@ -57,4 +56,9 @@ function generate_username(){
         }
     }
     return new_username;
+}
+
+function generate_timestamp(){
+    var dt = new Date();
+    return dt.toLocaleTimeString(); //calculate timestamp and format
 }
