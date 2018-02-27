@@ -2,7 +2,7 @@
 $(function() {
     var socket = io();
 
-   socket.emit('username_req');
+   socket.emit('nickname_req');
 
    /*WHat happens when a msg is sent*/
     $('form').submit(function(){
@@ -44,14 +44,13 @@ function parse_msg(msg, socket){
 
     // what to do upon nickname change request
     if(msg.startsWith("/nick ")){
-        var nickname = msg.substring(6);
+        var nickname = msg.substring(6).trim();
         if(nickname == ""){
             socket.emit('chat', "Request Failed: Invalid Nickname");
         }
         else{
-            socket.emit('chat', "DEVELOPMENT: You requested to change nickname");
             socket.emit('nick_change_request', nickname);
-            socket.username = nickname;
+            // socket.username = nickname;
         }
     }
 
