@@ -5,6 +5,7 @@ var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
 
 var users = []; // a list of current users
+var message_history = [200];
 
 http.listen( port, function () {
     console.log('listening on port', port);
@@ -62,3 +63,5 @@ function generate_timestamp(){
     var dt = new Date();
     return dt.toLocaleTimeString(); //calculate timestamp and format
 }
+
+//TODO store/update chat history
