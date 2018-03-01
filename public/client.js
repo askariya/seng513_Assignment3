@@ -4,14 +4,18 @@ $(function() {
     
     // TODO UNCOMMENT   
     socket.emit('nickname_req');
-    document.cookie=generate_cookie();
-    socket.emit('publish_cookies', document.cookie);
+    // set_cookie("username", "meow", 24);
+    socket.emit('publish_cookies', get_cookie("username"));
 
    /*WHat happens when a msg is sent*/
     $('form').submit(function(){
         parse_msg($('#m').val(), socket);
         $('#m').val('');
         return false;
+    });
+
+    socket.on('assign_cookie', function(nickname){
+        set_cookie("username", nickname, 1)
     });
 
     socket.on('chat', function(msg, nickname, nick_color, timestamp, is_self){
@@ -86,7 +90,26 @@ function parse_msg(msg, socket){
     }
 }
 
-function generate_cookie(){
-    var new_cookie = "name=meow";
-    return new_cookie;
+// Cookie set and get code from: https://www.w3schools.com/js/js_cookies.asp
+function set_cookie(name, value, exp_days){
+    var d = new Date();
+    d.setTime(d.getTime() + (exp_days*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+
+function get_cookie(name) {
+    name = name + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
 }

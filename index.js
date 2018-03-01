@@ -24,6 +24,8 @@ io.on('connection', function(socket){
     socket.on('nickname_req', function(){ 
         socket.nickname = generate_nickname();
         socket.color = generate_colour();
+
+        socket.emit('assign_cookie', socket.nickname);
         // emits to everyone but the connecting user
         socket.broadcast.emit('display_msg', socket.nickname+ " connected");
         //emits back to only the same user
