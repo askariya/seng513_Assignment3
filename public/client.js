@@ -23,7 +23,7 @@ $(function() {
     });
 
     socket.on('display_msg', function(msg){
-        $('#messages').append($('<li>').text(msg));
+        $('#messages').append($('<li>').html(msg));
         updateScroll();
     });
 
@@ -56,21 +56,34 @@ function parse_msg(msg, socket){
     if(msg.startsWith("/nick ")){
         var nickname = msg.substring(6).trim();
         if(nickname == ""){
-            socket.emit('chat', "Request Failed: Invalid Nickname");
+            socket.emit('display_msg', "Request Failed: Invalid Nickname");
         }
         else{
             socket.emit('nick_change_request', nickname);
-            // socket.username = nickname;
         }
     }
 
     //what to do upon nickname color change request
     else if(msg.startsWith("/nickcolor ")){
-        socket.emit('chat', "DEVELOPMENT: You requested to change nickname colour");
+        var nick_color = msg.substring(11).trim();
+        //Code for checking valid color from: 
+        //https://stackoverflow.com/questions/8027423/how-to-check-if-a-string-is-a-valid-hex-color-representation
+        var is_valid_color  = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test("#" + nick_color);
+        if(is_valid_color){
+            socket.emit('nick_color_change_request', "#" + nick_color);
+        }
+        else{
+            socket.emit('display_msg', "Request Failed: Invalid Color");
+        }
     }
 
     else{
         //standard chat message
-        socket.emit('chat', $('#m').val());
+        socket.emit('chat', msg);
     }
+}
+
+
+function check_colour(){
+    
 }

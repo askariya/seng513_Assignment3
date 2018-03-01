@@ -11,6 +11,7 @@ http.listen( port, function () {
     console.log('listening on port', port);
 });
 
+//TODO change the use of socket.nickname and socket.color to use cookies instead
 app.use(express.static(__dirname + '/public'));
 
 // listen to 'chat' messages
@@ -20,11 +21,9 @@ io.on('connection', function(socket){
         socket.nickname = generate_nickname();
         socket.color = generate_colour();
         // emits to everyone but the connecting user
-        socket.broadcast.emit('display_msg', socket.nickname + " connected");
-        // send_msg_to_all_excl(socket.nickname + " connected", socket)
+        socket.broadcast.emit('display_msg', socket.nickname.fontcolor(socket.color) + " connected");
         //emits back to only the same user
-        socket.emit('display_msg', "You are " + socket.nickname);
-        // send_msg_to_user("You are " + socket.nickname, socket);
+        socket.emit('display_msg', "You are " + socket.nickname.fontcolor(socket.color));
         io.emit('user_list_update',  Object(users));
     });
 
@@ -35,26 +34,32 @@ io.on('connection', function(socket){
             users[users.indexOf(socket.nickname)] = nick;
             socket.nickname = nick; 
             socket.emit('display_msg', "Your nickname is now: " + socket.nickname);
-            // send_msg_to_user("Your nickname is now: " + socket.nickname, socket);
             //update the user list
-            io.emit('user_list_update',  Object(users));
+            io.emit('user_list_update', Object(users));
         }
         else{
             socket.emit('display_msg', "Request Failed: Nickname already in use. " + socket.nickname);
-            // send_msg_to_user("Request Failed: Nickname already in use. " + socket.nickname);
         }
     });
 
+    socket.on('nick_color_change_request', function(nick_color){
+        socket.color = nick_color;
+        socket.emit('display_msg', "Your nickname is now " + "this color.".fontcolor(nick_color));
+    });
+
     socket.on('chat', function(msg){
-        socket.broadcast.emit('chat', msg, socket.nickname, socket.color, generate_timestamp(), false);
-        socket.emit('chat', msg, socket.nickname, socket.color, generate_timestamp(), true);
-          
+        var timestamp = generate_timestamp();
+        socket.broadcast.emit('chat', msg, socket.nickname, socket.color, timestamp, false);
+        socket.emit('chat', msg, socket.nickname, socket.color, timestamp, true);
+    });
+
+    socket.on('display_msg', function(msg){
+        socket.emit('display_msg', msg);
     });
  
     socket.on('disconnect', function(){
         //TODO maybe set socket nickname to undefined???
-        io.emit('display_msg', socket.nickname + ' disconnected');
-        // send_msg_to_all(socket.nickname + ' disconnected', io)
+        io.emit('display_msg', socket.nickname.fontcolor(socket.color) + ' disconnected');
         //remove user from list
         users.splice(users.indexOf(socket.nickname), 1);
     });
