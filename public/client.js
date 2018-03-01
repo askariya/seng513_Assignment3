@@ -12,10 +12,13 @@ $(function() {
         return false;
     });
 
-    socket.on('chat', function(msg, nickname, nick_colour, timestamp){
+    socket.on('chat', function(msg, nickname, nick_color, timestamp, is_self){
         var separator = '\xa0\xa0\xa0\xa0\xa0';
-        final_msg = timestamp + separator + nickname + ": \xa0\xa0" + msg;
-        $('#messages').append($('<li>').html(timestamp + separator + nickname.fontcolor(nick_colour) + ": \xa0\xa0" + msg));
+        final_msg = timestamp + separator + nickname.fontcolor(nick_color) + ": \xa0\xa0" + msg;
+        //if the message is from this user, bold the message
+        if(is_self)
+            final_msg = final_msg.bold();
+        $('#messages').append($('<li>').html(final_msg));
         updateScroll();
     });
 

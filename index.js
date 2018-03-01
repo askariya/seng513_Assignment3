@@ -46,7 +46,9 @@ io.on('connection', function(socket){
     });
 
     socket.on('chat', function(msg){
-	    io.emit('chat', msg, socket.nickname, socket.color, generate_timestamp());  
+        socket.broadcast.emit('chat', msg, socket.nickname, socket.color, generate_timestamp(), false);
+        socket.emit('chat', msg, socket.nickname, socket.color, generate_timestamp(), true);
+          
     });
  
     socket.on('disconnect', function(){
