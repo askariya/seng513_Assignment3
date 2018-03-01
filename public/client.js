@@ -2,26 +2,23 @@
 $(function() {
     var socket = io();
     
-    // TODO UNCOMMENT   
+    // TODO UNCOMMENT  
     socket.emit('nickname_req', get_cookie("username"), get_cookie("color"));
-    // set_cookie("username", "meow", 24);
+    // DEBUGGING
+    //delete_cookie("username");
+    //delete_cookie("color");
 
-    // delete_cookie(get_cookie("username"));
-
-   /*WHat happens when a msg is sent*/
+   /*What happens when a msg is sent*/
     $('form').submit(function(){
         parse_msg($('#m').val(), socket);
         $('#m').val('');
         return false;
     });
 
-    // socket.on("cookie_request", function(){
-    //     get_cookie("username");
-    // });
-
     socket.on('assign_cookie', function(nickname, color){
-        set_cookie("username", nickname, 1);
-        set_cookie("color", color, 1);
+        // set color 
+        set_cookie("username", nickname, 30);
+        set_cookie("color", color, 30);
         socket.emit('publish_cookies', get_cookie("username"));
     });
 
@@ -32,7 +29,7 @@ $(function() {
         if(is_self)
             final_msg = final_msg.bold();
         $('#messages').append($('<li>').html(final_msg));
-        $('#messages').append($('<li>').html(get_cookie("username")));
+        //DEBUG: $('#messages').append($('<li>').html(get_cookie("username")));
         updateScroll();
     });
 
@@ -98,10 +95,10 @@ function parse_msg(msg, socket){
     }
 }
 
-// Cookie set and get code from: https://www.w3schools.com/js/js_cookies.asp
-function set_cookie(name, value, exp_days){
+// Cookie set and get code modified from: https://www.w3schools.com/js/js_cookies.asp
+function set_cookie(name, value, secs){
     var d = new Date();
-    d.setTime(d.getTime() + (exp_days*24*60*60*1000));
+    d.setSeconds(d.getSeconds() + secs);
     var expires = "expires="+ d.toUTCString();
     document.cookie = name + "=" + value + ";" + expires + ";path=/";
 }
