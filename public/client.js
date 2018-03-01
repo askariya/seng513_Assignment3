@@ -1,8 +1,9 @@
 // shorthand for $(document).ready(...)
 $(function() {
     var socket = io();
-
-   socket.emit('nickname_req');
+    
+    // TODO UNCOMMENT   
+    socket.emit('nickname_req');
 
    /*WHat happens when a msg is sent*/
     $('form').submit(function(){
@@ -11,8 +12,14 @@ $(function() {
         return false;
     });
 
-    socket.on('chat', function(msg){
-        // var msg_display = document.getElementById();
+    socket.on('chat', function(msg, nickname, timestamp){
+        var separator = '\xa0\xa0\xa0\xa0\xa0';
+        final_msg = timestamp + separator + nickname + ": \xa0\xa0" + msg;
+        $('#messages').append($('<li>').text(final_msg).css('color', 'yellow'));
+        updateScroll();
+    });
+
+    socket.on('display_msg', function(msg){
         $('#messages').append($('<li>').text(msg));
         updateScroll();
     });
