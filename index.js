@@ -21,17 +21,26 @@ io.on('connection', function(socket){
         console.log(cookies);
     });
 
-    socket.on('nickname_req', function(){ 
-        socket.nickname = generate_nickname();
-        socket.color = generate_colour();
+    socket.on('nickname_req', function(cookie_uname, cookie_color){ 
 
-        socket.emit('assign_cookie', socket.nickname);
+        //if there are no cookies (new user)
+        if (cookie_uname != "" && cookie_color != ""){
+            socket.nickname = cookie_uname;
+            socket.color = cookie_color;
+        }
+
+        //if there are cookies (returning user)
+        else{
+            socket.nickname = generate_nickname();
+            socket.color = generate_colour();
+            socket.emit('assign_cookie', socket.nickname, socket.color);
+        }
         // emits to everyone but the connecting user
         socket.broadcast.emit('display_msg', socket.nickname+ " connected");
         //emits back to only the same user
         socket.emit('display_msg', "You are " + socket.nickname);
         io.emit('user_list_update',  Object(users));
-    });
+});
 
     socket.on('nick_change_request', function(nick){
         //check that the nickname isn't already in use.
@@ -106,5 +115,6 @@ function generate_timestamp(){
     var dt = new Date();
     return dt.toLocaleTimeString(); //calculate timestamp and format
 }
+
 
 //TODO store/update chat history

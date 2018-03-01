@@ -3,9 +3,10 @@ $(function() {
     var socket = io();
     
     // TODO UNCOMMENT   
-    socket.emit('nickname_req');
+    socket.emit('nickname_req', get_cookie("username"), get_cookie("color"));
     // set_cookie("username", "meow", 24);
-    socket.emit('publish_cookies', get_cookie("username"));
+
+    // delete_cookie(get_cookie("username"));
 
    /*WHat happens when a msg is sent*/
     $('form').submit(function(){
@@ -14,8 +15,14 @@ $(function() {
         return false;
     });
 
-    socket.on('assign_cookie', function(nickname){
-        set_cookie("username", nickname, 1)
+    // socket.on("cookie_request", function(){
+    //     get_cookie("username");
+    // });
+
+    socket.on('assign_cookie', function(nickname, color){
+        set_cookie("username", nickname, 1);
+        set_cookie("color", color, 1);
+        socket.emit('publish_cookies', get_cookie("username"));
     });
 
     socket.on('chat', function(msg, nickname, nick_color, timestamp, is_self){
@@ -25,6 +32,7 @@ $(function() {
         if(is_self)
             final_msg = final_msg.bold();
         $('#messages').append($('<li>').html(final_msg));
+        $('#messages').append($('<li>').html(get_cookie("username")));
         updateScroll();
     });
 
@@ -113,3 +121,7 @@ function get_cookie(name) {
     }
     return "";
 }
+
+function delete_cookie(name) {
+    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+};
