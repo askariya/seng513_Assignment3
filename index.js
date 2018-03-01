@@ -17,13 +17,17 @@ app.use(express.static(__dirname + '/public'));
 // listen to 'chat' messages
 io.on('connection', function(socket){
 
+    socket.on('publish_cookies', function(cookies){
+        console.log(cookies);
+    });
+
     socket.on('nickname_req', function(){ 
         socket.nickname = generate_nickname();
         socket.color = generate_colour();
         // emits to everyone but the connecting user
-        socket.broadcast.emit('display_msg', socket.nickname.fontcolor(socket.color) + " connected");
+        socket.broadcast.emit('display_msg', socket.nickname+ " connected");
         //emits back to only the same user
-        socket.emit('display_msg', "You are " + socket.nickname.fontcolor(socket.color));
+        socket.emit('display_msg', "You are " + socket.nickname);
         io.emit('user_list_update',  Object(users));
     });
 
@@ -59,7 +63,7 @@ io.on('connection', function(socket){
  
     socket.on('disconnect', function(){
         //TODO maybe set socket nickname to undefined???
-        io.emit('display_msg', socket.nickname.fontcolor(socket.color) + ' disconnected');
+        io.emit('display_msg', socket.nickname + ' disconnected');
         //remove user from list
         users.splice(users.indexOf(socket.nickname), 1);
     });

@@ -4,6 +4,8 @@ $(function() {
     
     // TODO UNCOMMENT   
     socket.emit('nickname_req');
+    document.cookie=generate_cookie();
+    socket.emit('publish_cookies', document.cookie);
 
    /*WHat happens when a msg is sent*/
     $('form').submit(function(){
@@ -14,7 +16,7 @@ $(function() {
 
     socket.on('chat', function(msg, nickname, nick_color, timestamp, is_self){
         var separator = '\xa0\xa0\xa0\xa0\xa0';
-        final_msg = timestamp + separator + nickname.fontcolor(nick_color) + ": \xa0\xa0" + msg;
+        final_msg = timestamp + separator + nickname.toString().fontcolor(nick_color) + ": \xa0\xa0" + msg;
         //if the message is from this user, bold the message
         if(is_self)
             final_msg = final_msg.bold();
@@ -55,6 +57,7 @@ function parse_msg(msg, socket){
     // what to do upon nickname change request
     if(msg.startsWith("/nick ")){
         var nickname = msg.substring(6).trim();
+        //TODO add additonal checks for the nickname
         if(nickname == ""){
             socket.emit('display_msg', "Request Failed: Invalid Nickname");
         }
@@ -83,7 +86,7 @@ function parse_msg(msg, socket){
     }
 }
 
-
-function check_colour(){
-    
+function generate_cookie(){
+    var new_cookie = "name=meow";
+    return new_cookie;
 }
