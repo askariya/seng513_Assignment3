@@ -18,6 +18,7 @@ io.on('connection', function(socket){
 
     socket.on('nickname_req', function(){ 
         socket.nickname = generate_nickname();
+        socket.color = generate_colour();
         // emits to everyone but the connecting user
         socket.broadcast.emit('display_msg', socket.nickname + " connected");
         // send_msg_to_all_excl(socket.nickname + " connected", socket)
@@ -45,7 +46,7 @@ io.on('connection', function(socket){
     });
 
     socket.on('chat', function(msg){
-	    io.emit('chat', msg, socket.nickname, generate_timestamp());  
+	    io.emit('chat', msg, socket.nickname, socket.color, generate_timestamp());  
     });
  
     socket.on('disconnect', function(){
@@ -74,6 +75,18 @@ function generate_nickname(){
         }
     }
     return new_nickname;
+}
+
+/* Colour generator from:
+https://stackoverflow.com/questions/1484506/random-color-generator
+*/
+function generate_colour(){
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
 }
 
 function generate_timestamp(){

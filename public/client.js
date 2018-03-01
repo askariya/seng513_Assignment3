@@ -12,10 +12,10 @@ $(function() {
         return false;
     });
 
-    socket.on('chat', function(msg, nickname, timestamp){
+    socket.on('chat', function(msg, nickname, nick_colour, timestamp){
         var separator = '\xa0\xa0\xa0\xa0\xa0';
         final_msg = timestamp + separator + nickname + ": \xa0\xa0" + msg;
-        $('#messages').append($('<li>').text(final_msg).css('color', 'yellow'));
+        $('#messages').append($('<li>').html(timestamp + separator + nickname.fontcolor(nick_colour) + ": \xa0\xa0" + msg));
         updateScroll();
     });
 
