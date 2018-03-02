@@ -22,23 +22,32 @@ io.on('connection', function(socket){
     });
 
     socket.on('nickname_req', function(cookie_uname, cookie_color){ 
-
-        //if there are no cookies (new user)
+  
+        //if there are cookies (returning user)
         if (cookie_uname != "" && cookie_color != ""){
             socket.nickname = cookie_uname;
+            //add to list of current users
+            if(add_to_users(socket.nickname)){
+                socket.emit('display_msg', "Welcome back, " + socket.nickname + ".");
+            }
+            else{
+                //TODO find a way to avoid this
+                socket.emit('display_msg', "Sorry, fam, your username was stolen.");
+                socket.nickname = generate_nickname();
+            }
             socket.color = cookie_color;
         }
 
-        //if there are cookies (returning user)
+        //if there are no cookies (new user)
         else{
             socket.nickname = generate_nickname();
             socket.color = generate_colour();
             socket.emit('assign_cookie', socket.nickname, socket.color);
+            socket.emit('display_msg', "You are " + socket.nickname);
         }
         // emits to everyone but the connecting user
         socket.broadcast.emit('display_msg', socket.nickname+ " connected");
         //emits back to only the same user
-        socket.emit('display_msg', "You are " + socket.nickname);
         io.emit('user_list_update',  Object(users));
 });
 
@@ -86,17 +95,31 @@ io.on('connection', function(socket){
 function generate_nickname(){
     var valid_un = false;
     var new_nickname = null;
-    while(!valid_un){
+    while(true){
         var rug = require('random-username-generator');
         new_nickname = rug.generate();
-        // if username doesn't exist
-        if(users.indexOf(new_nickname) == -1){
-            valid_un = true;
-            // add new nickname to the list
-            users.push(new_nickname);
+        // if username successfully added
+        if(add_to_users(new_nickname)){
+            break;
         }
     }
     return new_nickname;
+}
+
+/**
+ * Adds username to list of current users
+ * Returns: true if successful, false otherwise
+ */
+function add_to_users(nickname){
+    // if nickname doesn't exist
+    if(users.indexOf(nickname) == -1){
+        // add new nickname to the list and return true
+        users.push(nickname);
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 /* Colour generator from:
