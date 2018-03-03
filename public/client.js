@@ -22,19 +22,14 @@ $(function() {
         // socket.emit('publish_cookies', get_cookie("username"));
     });
 
-    socket.on('chat', function(msg, nickname, nick_color, timestamp, is_self){
-        var separator = '\xa0\xa0\xa0\xa0\xa0';
-        final_msg = timestamp + separator + nickname.toString().fontcolor(nick_color) + ": \xa0\xa0" + msg;
-        //if the message is from this user, bold the message
-        if(is_self)
-            final_msg = final_msg.bold();
-        $('#messages').append($('<li>').html(final_msg));
+    socket.on('chat', function(msg){
+        $('#messages').append($('<li>').html(msg));
         //DEBUG: $('#messages').append($('<li>').html(get_cookie("username")));
         updateScroll();
     });
 
     socket.on('display_msg', function(msg){
-        $('#messages').append($('<li>').html(msg));
+        $('#messages').append($('<li>').html(msg.italics()));
         updateScroll();
     });
 
@@ -95,7 +90,7 @@ function parse_msg(msg, socket){
     }
 }
 
-// Cookie set and get code modified from: https://www.w3schools.com/js/js_cookies.asp
+// Cookie set, get and delete code modified from: https://www.w3schools.com/js/js_cookies.asp
 function set_cookie(name, value, secs){
     var d = new Date();
     d.setSeconds(d.getSeconds() + secs);

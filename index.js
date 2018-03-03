@@ -80,8 +80,10 @@ io.on('connection', function(socket){
 
     socket.on('chat', function(msg){
         var timestamp = generate_timestamp();
-        socket.broadcast.emit('chat', msg, socket.nickname, socket.color, timestamp, false);
-        socket.emit('chat', msg, socket.nickname, socket.color, timestamp, true);
+        var separator = '\xa0\xa0\xa0\xa0\xa0';
+        final_msg = timestamp + separator + socket.nickname.toString().fontcolor(socket.color) + ": \xa0\xa0" + msg;
+        socket.broadcast.emit('chat', final_msg);
+        socket.emit('chat', final_msg.bold());
     });
 
     socket.on('display_msg', function(msg){
@@ -94,7 +96,7 @@ io.on('connection', function(socket){
         //remove user from list
         current_users.splice(current_users.indexOf(socket.nickname), 1);
         io.emit('user_list_update', Object(current_users));
-        console.log(msg_history.toString());
+        //DEBUG: console.log(msg_history.toString());
     });
 });
 
@@ -147,6 +149,3 @@ function generate_timestamp(){
     var dt = new Date();
     return dt.toLocaleTimeString(); //calculate timestamp and format
 }
-
-
-//TODO store/update chat history
