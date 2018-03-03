@@ -4,8 +4,8 @@ var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
 
-var users = []; // a list of current users
-var message_history = [200];
+var current_users = []; // a list of current users
+var msg_history = [200];
 
 http.listen( port, function () {
     console.log('listening on port', port);
@@ -17,6 +17,7 @@ app.use(express.static(__dirname + '/public'));
 // listen to 'chat' messages
 io.on('connection', function(socket){
 
+    //TODO DELETE
     socket.on('publish_cookies', function(cookies){
         console.log(cookies);
     });
@@ -25,17 +26,21 @@ io.on('connection', function(socket){
   
         //if there are cookies (returning user)
         if (cookie_uname != "" && cookie_color != ""){
-            socket.nickname = cookie_uname;
-            //add to list of current users
-            if(add_to_users(socket.nickname)){
+            
+            socket.color = cookie_color;
+            //add to list of current users -- if successful...
+            if(add_to_users(cookie_uname)){
+                socket.nickname = cookie_uname;
                 socket.emit('display_msg', "Welcome back, " + socket.nickname + ".");
             }
+            // if the username was stolen
             else{
-                //TODO find a way to avoid this
-                socket.emit('display_msg', "Sorry, fam, your username was stolen.");
                 socket.nickname = generate_nickname();
+                //TODO find a way to avoid this
+                socket.emit('display_msg', "Your previous username is in use.\n" + 
+                "Your new username is: " + socket.nickname);
+                socket.emit('assign_cookie', socket.nickname, socket.color);
             }
-            socket.color = cookie_color;
         }
 
         //if there are no cookies (new user)
@@ -48,26 +53,28 @@ io.on('connection', function(socket){
         // emits to everyone but the connecting user
         socket.broadcast.emit('display_msg', socket.nickname+ " connected");
         //emits back to only the same user
-        io.emit('user_list_update',  Object(users));
+        io.emit('user_list_update',  Object(current_users));
 });
 
     socket.on('nick_change_request', function(nick){
         //check that the nickname isn't already in use.
-        if(users.indexOf(nick) == -1){
+        if(current_users.indexOf(nick) == -1){
             // assign the new nickname to this user
-            users[users.indexOf(socket.nickname)] = nick;
+            current_users[current_users.indexOf(socket.nickname)] = nick;
             socket.nickname = nick; 
+            socket.emit('assign_cookie', socket.nickname, socket.color);
             socket.emit('display_msg', "Your nickname is now: " + socket.nickname);
             //update the user list
-            io.emit('user_list_update', Object(users));
+            io.emit('user_list_update', Object(current_users));
         }
         else{
-            socket.emit('display_msg', "Request Failed: Nickname already in use. " + socket.nickname);
+            socket.emit('display_msg', "Request Failed: Nickname already in use. ");
         }
     });
 
     socket.on('nick_color_change_request', function(nick_color){
         socket.color = nick_color;
+        socket.emit('assign_cookie', socket.nickname, socket.color);
         socket.emit('display_msg', "Your nickname is now " + "this color.".fontcolor(nick_color));
     });
 
@@ -85,7 +92,9 @@ io.on('connection', function(socket){
         //TODO maybe set socket nickname to undefined???
         io.emit('display_msg', socket.nickname + ' disconnected');
         //remove user from list
-        users.splice(users.indexOf(socket.nickname), 1);
+        current_users.splice(current_users.indexOf(socket.nickname), 1);
+        io.emit('user_list_update', Object(current_users));
+        console.log(msg_history.toString());
     });
 });
 
@@ -112,9 +121,9 @@ function generate_nickname(){
  */
 function add_to_users(nickname){
     // if nickname doesn't exist
-    if(users.indexOf(nickname) == -1){
+    if(current_users.indexOf(nickname) == -1){
         // add new nickname to the list and return true
-        users.push(nickname);
+        current_users.push(nickname);
         return true;
     }
     else{

@@ -2,7 +2,6 @@
 $(function() {
     var socket = io();
     
-    // TODO UNCOMMENT  
     socket.emit('nickname_req', get_cookie("username"), get_cookie("color"));
     // DEBUGGING
     //delete_cookie("username");
@@ -19,7 +18,8 @@ $(function() {
         // set color 
         set_cookie("username", nickname, 30);
         set_cookie("color", color, 30);
-        socket.emit('publish_cookies', get_cookie("username"));
+        //TODO DELETE
+        // socket.emit('publish_cookies', get_cookie("username"));
     });
 
     socket.on('chat', function(msg, nickname, nick_color, timestamp, is_self){
@@ -38,8 +38,8 @@ $(function() {
         updateScroll();
     });
 
-    socket.on('user_list_update', function(users){
-        update_user_list(users);
+    socket.on('user_list_update', function(current_users){
+        update_user_list(current_users);
     });
 
 });
@@ -50,10 +50,10 @@ function updateScroll(){
     element.scrollTop = element.scrollHeight;
 }
 
-function update_user_list(users){
+function update_user_list(current_users){
     document.getElementById('users').innerHTML = "";
-    for(var user in users){
-        $('#users').append($('<li>').text(users[user]));
+    for(var user in current_users){
+        $('#users').append($('<li>').text(current_users[user]));
     }
 }
 
@@ -122,3 +122,12 @@ function get_cookie(name) {
 function delete_cookie(name) {
     document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 };
+
+//TODO DELETE
+// function read_ul(){
+//     var ul = document.getElementById("messages");
+//     var items = ul.getElementsByTagName("li");
+//     for (var i = 0; i < items.length; ++i) {
+//         socket.emit('chat', items[i]);
+//     }
+// }
