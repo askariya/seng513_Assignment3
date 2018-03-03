@@ -2,6 +2,7 @@
 $(function() {
     var socket = io();
     
+    socket.emit('msg_history_req');
     socket.emit('nickname_req', get_cookie("username"), get_cookie("color"));
     // DEBUGGING
     //delete_cookie("username");
@@ -29,7 +30,7 @@ $(function() {
     });
 
     socket.on('display_msg', function(msg){
-        $('#messages').append($('<li>').html(msg));
+        $('#messages').append($('<li>').html(msg.italics()));
         updateScroll();
     });
 

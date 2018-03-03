@@ -5,7 +5,8 @@ var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
 
 var current_users = []; // a list of current users
-var msg_history = [200];
+var msg_history = [];
+msg_history.length = 200;
 
 http.listen( port, function () {
     console.log('listening on port', port);
@@ -105,9 +106,10 @@ io.on('connection', function(socket){
         msg_history.push(final_msg);
     });
 
-    socket.on('display_msg', function(msg){
-        socket.emit('display_msg', msg.italics());
-        msg_history.push(msg);
+    socket.on('msg_history_req', function(){
+        for(var msg in msg_history){
+            socket.emit('chat', msg_history[msg]);
+        }
     });
  
     socket.on('disconnect', function(){
@@ -119,6 +121,21 @@ io.on('connection', function(socket){
         //DEBUG: console.log(msg_history.toString());
     });
 });
+
+
+// function send_chat(msg){
+//     io.emit('chat', msg); 
+//     msg_history.push(msg);
+// }
+
+// function send_chat_to_user(msg){
+//     socket.emit('chat', msg);
+// }
+
+// function send_display_msg(msg){
+//     io.emit('chat', msg.italics());
+// }
+
 
 /** 
  * Generates a random nickname
