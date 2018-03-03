@@ -56,26 +56,44 @@ io.on('connection', function(socket){
         io.emit('user_list_update',  Object(current_users));
 });
 
-    socket.on('nick_change_request', function(nick){
-        //check that the nickname isn't already in use.
-        if(current_users.indexOf(nick) == -1){
-            // assign the new nickname to this user
-            current_users[current_users.indexOf(socket.nickname)] = nick;
-            socket.nickname = nick; 
-            socket.emit('assign_cookie', socket.nickname, socket.color);
-            socket.emit('display_msg', "Your nickname is now: " + socket.nickname);
-            //update the user list
-            io.emit('user_list_update', Object(current_users));
+    socket.on('nick_change_request', function(nick_msg){
+        var nick = nick_msg.substring(6).trim();
+        // if nickname is empty, ignore
+        if(nick == ""){
+            socket.emit('display_msg', "Request Failed: Invalid Nickname");
         }
         else{
-            socket.emit('display_msg', "Request Failed: Nickname already in use. ");
+            //check that the nickname isn't already in use.
+            if(current_users.indexOf(nick) == -1){
+                // assign the new nickname to this user
+                current_users[current_users.indexOf(socket.nickname)] = nick;
+                socket.nickname = nick; 
+                socket.emit('assign_cookie', socket.nickname, socket.color);
+                socket.emit('display_msg', "Your nickname is now: " + socket.nickname);
+                //update the user list
+                io.emit('user_list_update', Object(current_users));
+            }
+            else{
+                socket.emit('display_msg', "Request Failed: Nickname already in use. ");
+            }
         }
     });
 
-    socket.on('nick_color_change_request', function(nick_color){
-        socket.color = nick_color;
-        socket.emit('assign_cookie', socket.nickname, socket.color);
-        socket.emit('display_msg', "Your nickname is now " + "this color.".fontcolor(nick_color));
+    socket.on('nick_color_change_request', function(nick_color_msg){
+        var nick_color = "#" + nick_color_msg.substring(11).trim();
+        //Code for checking valid color from: 
+        //https://stackoverflow.com/questions/8027423/how-to-check-if-a-string-is-a-valid-hex-color-representation
+        var is_valid_color  = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(nick_color);
+        //if the colour is valid, assign the color to the nickname
+        if(is_valid_color){
+            socket.color = nick_color;
+            socket.emit('assign_cookie', socket.nickname, socket.color);
+            socket.emit('display_msg', "Your nickname is now " + "this color.".fontcolor(nick_color));
+        }
+        // if the colour is invalid, send an error message 
+        else{
+            socket.emit('display_msg', "Request Failed: Invalid Color");
+        }
     });
 
     socket.on('chat', function(msg){
@@ -84,10 +102,12 @@ io.on('connection', function(socket){
         final_msg = timestamp + separator + socket.nickname.toString().fontcolor(socket.color) + ": \xa0\xa0" + msg;
         socket.broadcast.emit('chat', final_msg);
         socket.emit('chat', final_msg.bold());
+        msg_history.push(final_msg);
     });
 
     socket.on('display_msg', function(msg){
-        socket.emit('display_msg', msg);
+        socket.emit('display_msg', msg.italics());
+        msg_history.push(msg);
     });
  
     socket.on('disconnect', function(){
