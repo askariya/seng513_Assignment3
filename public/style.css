@@ -35,7 +35,7 @@ div #msg-display{
     width: 100%;
     float: center;
     overflow: auto;
-
+    position: relative;
 }
 
 div.right{
@@ -54,6 +54,8 @@ div #usr-display{
     height: 100%;
     width: 100%;
     float: center;
+    overflow: auto;
+    position: relative;
 }
 
 
@@ -98,9 +100,15 @@ form button {
 
 
 #messages { 
+    /* border: 2px solid blue;  */
     list-style-type: none; 
     margin: 0; 
-    padding: 0; 
+    padding: 0;
+    position: absolute; 
+    bottom: 0;
+    width: 100%;
+    max-height: 100%;
+    word-wrap:break-word;
 }
 #messages li { 
     padding: 5px 10px; 
@@ -110,6 +118,11 @@ form button {
     list-style-type: none; 
     margin: 0; 
     padding: 0; 
+    position: absolute; 
+    bottom: 0;
+    width: 100%;
+    max-height: 100%;
+    word-wrap:break-word;
 }
 #users li { 
     padding: 5px 10px; 

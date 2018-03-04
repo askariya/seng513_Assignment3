@@ -116,20 +116,6 @@ io.on('connection', function(socket){
     });
 });
 
-
-// function send_chat(msg){
-//     io.emit('chat', msg); 
-//     msg_history.push(msg);
-// }
-
-// function send_chat_to_user(msg){
-//     socket.emit('chat', msg);
-// }
-
-// function send_display_msg(msg){
-//     io.emit('chat', msg.italics());
-// }
-
 function add_to_msg_history(msg){
     //if the msg_history array is at capacity
     if(msg_history.length == msg_history_capacity){
@@ -197,6 +183,7 @@ function generate_colour(){
     for (var i = 0; i < 6; i++) {
         color += letters[Math.floor(Math.random() * 16)];
     }
+
     return color;
 }
 
