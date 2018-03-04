@@ -17,27 +17,24 @@ app.use(express.static(__dirname + '/public'));
 
 // listen to 'chat' messages
 io.on('connection', function(socket){
-
-    //TODO DELETE
-    socket.on('publish_cookies', function(cookies){
-        console.log(cookies);
-    });
-
-    socket.on('nickname_req', function(cookie_uname, cookie_color){ 
+    /**
+     * Handles assigning username and getting message history
+     */
+    socket.on('initialize', function(cookie_uname, cookie_color){ 
   
         //if there are cookies (returning user)
         if (cookie_uname != "" && cookie_color != ""){
-            
             socket.color = cookie_color;
             //add to list of current users -- if successful...
             if(add_to_users(cookie_uname)){
                 socket.nickname = cookie_uname;
+                msg_history_req(socket);
                 socket.emit('display_msg', "Welcome back, " + socket.nickname.fontcolor(socket.color) + ".");
             }
             // if the username was stolen
             else{
                 socket.nickname = generate_nickname();
-                //TODO find a way to avoid this
+                msg_history_req(socket);
                 socket.emit('display_msg', "Your previous username is in use.\n" + 
                 "Your new username is: " + socket.nickname.fontcolor(socket.color));
                 socket.emit('assign_cookie', socket.nickname, socket.color);
@@ -48,6 +45,7 @@ io.on('connection', function(socket){
         else{
             socket.nickname = generate_nickname();
             socket.color = generate_colour();
+            msg_history_req(socket);
             socket.emit('assign_cookie', socket.nickname, socket.color);
             socket.emit('display_msg', "You are " + socket.nickname.fontcolor(socket.color));
         }
@@ -106,12 +104,6 @@ io.on('connection', function(socket){
         // msg_history.push(final_msg);
         add_to_msg_history(final_msg);
     });
-
-    socket.on('msg_history_req', function(){
-        for(var msg in msg_history){
-            socket.emit('chat', msg_history[msg]);
-        }
-    });
  
     socket.on('disconnect', function(){
         if (socket.nickname != undefined){
@@ -148,6 +140,20 @@ function add_to_msg_history(msg){
     msg_history.push(msg);
 }
 
+
+function msg_history_req(socket){
+    for(var msg in msg_history){
+        var separator = '\xa0\xa0\xa0\xa0\xa0';
+        var nickname = (msg_history[msg].split(separator)[1]).split(":")[0];
+        // if the message is from the current user, bold it before sending
+        if (nickname == socket.nickname.fontcolor(socket.color)){
+            socket.emit('chat', msg_history[msg].bold());
+        }
+        else{
+            socket.emit('chat', msg_history[msg]);
+        }
+    }
+}
 
 /** 
  * Generates a random nickname

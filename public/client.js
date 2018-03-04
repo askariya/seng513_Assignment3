@@ -2,8 +2,7 @@
 $(function() {
     var socket = io();
     
-    socket.emit('msg_history_req');
-    socket.emit('nickname_req', get_cookie("username"), get_cookie("color"));
+    socket.emit('initialize', get_cookie("username"), get_cookie("color"));
     // DEBUGGING
     //delete_cookie("username");
     //delete_cookie("color");
