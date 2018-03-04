@@ -12,23 +12,25 @@ html{
 
 body { 
     font: 13px Helvetica, Arial; 
-    border: 2px dashed red;
+    background: black;
+    /* border: 2px dashed red; */
     height: 100%;
     width: 100%;
     /* padding: 30px; */
 }
 
 div.left{
-    border: 2px solid green;
+    /* border: 2px solid green; */
     height: 90%;
     width: 70%;
     float: left;
     padding: 30px;
+    /* padding-right: 20px; */
     font-size: 1.2em;
 }
 
 div #msg-display{
-    border: 2px solid orange;
+    border: 2px solid rgb(180, 180, 180);
     background: #282D33;
     color: white;
     height: 100%;
@@ -39,16 +41,17 @@ div #msg-display{
 }
 
 div.right{
-    border: 2px solid blue;
+    /* border: 2px solid blue; */
     height: 90%;
     width: 30%;
     float:right;
     padding: 30px;
+    padding-left: 10px;
     font-size: 1.2em;
 }
 
 div #usr-display{
-    border: 2px solid orange;
+    border: 2px solid rgb(180, 180, 180);
     background: #282D33;
     color: white;
     height: 100%;
@@ -64,15 +67,18 @@ div.form{
     width: 100%;
     clear: both;
     padding: 10px;
-    border: 2px solid yellow;
+    padding-right: 30px;
+    padding-left: 30px;
+    /* border: 2px solid yellow; */
 }
 
 
 form { 
-    border: 2px solid red;
+    /* border: 2px solid black; */
+    border: 2px solid rgb(180, 180, 180);
     background: #000; 
-    min-height: 30px;
-    max-height: 40px;
+    min-height: 45px;
+    max-height: 35px;
     /* padding: 0.5em;  */
     /* position: fixed; 
     bottom: 0;  */
@@ -81,7 +87,7 @@ form {
     
 }
 form input { 
-    border: 2px solid blue; 
+    /* border: 2px solid blue;  */
     /* padding: 10px;  */
     width: 90%; 
     height: 100%;
@@ -98,6 +104,9 @@ form button {
     float: right;
 }
 
+form button:hover{
+    background: #41EAD4;
+}
 
 #messages { 
     /* border: 2px solid blue;  */
