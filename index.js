@@ -6,7 +6,7 @@ var port = process.env.PORT || 3000;
 
 var current_users = []; // a list of current users
 var msg_history = [];
-msg_history.length = 200;
+var msg_history_capacity = 200;
 
 http.listen( port, function () {
     console.log('listening on port', port);
@@ -32,14 +32,14 @@ io.on('connection', function(socket){
             //add to list of current users -- if successful...
             if(add_to_users(cookie_uname)){
                 socket.nickname = cookie_uname;
-                socket.emit('display_msg', "Welcome back, " + socket.nickname + ".");
+                socket.emit('display_msg', "Welcome back, " + socket.nickname.fontcolor(socket.color) + ".");
             }
             // if the username was stolen
             else{
                 socket.nickname = generate_nickname();
                 //TODO find a way to avoid this
                 socket.emit('display_msg', "Your previous username is in use.\n" + 
-                "Your new username is: " + socket.nickname);
+                "Your new username is: " + socket.nickname.fontcolor(socket.color));
                 socket.emit('assign_cookie', socket.nickname, socket.color);
             }
         }
@@ -49,10 +49,10 @@ io.on('connection', function(socket){
             socket.nickname = generate_nickname();
             socket.color = generate_colour();
             socket.emit('assign_cookie', socket.nickname, socket.color);
-            socket.emit('display_msg', "You are " + socket.nickname);
+            socket.emit('display_msg', "You are " + socket.nickname.fontcolor(socket.color));
         }
         // emits to everyone but the connecting user
-        socket.broadcast.emit('display_msg', socket.nickname+ " connected");
+        socket.broadcast.emit('display_msg', socket.nickname.fontcolor(socket.color) + " connected");
         //emits back to only the same user
         io.emit('user_list_update',  Object(current_users));
 });
@@ -103,7 +103,8 @@ io.on('connection', function(socket){
         final_msg = timestamp + separator + socket.nickname.toString().fontcolor(socket.color) + ": \xa0\xa0" + msg;
         socket.broadcast.emit('chat', final_msg);
         socket.emit('chat', final_msg.bold());
-        msg_history.push(final_msg);
+        // msg_history.push(final_msg);
+        add_to_msg_history(final_msg);
     });
 
     socket.on('msg_history_req', function(){
@@ -113,12 +114,13 @@ io.on('connection', function(socket){
     });
  
     socket.on('disconnect', function(){
-        //TODO maybe set socket nickname to undefined???
-        io.emit('display_msg', socket.nickname + ' disconnected');
-        //remove user from list
-        current_users.splice(current_users.indexOf(socket.nickname), 1);
-        io.emit('user_list_update', Object(current_users));
-        //DEBUG: console.log(msg_history.toString());
+        if (socket.nickname != undefined){
+            io.emit('display_msg', socket.nickname.fontcolor(socket.color) + ' disconnected');
+            //remove user from list
+            current_users.splice(current_users.indexOf(socket.nickname), 1);
+            io.emit('user_list_update', Object(current_users));
+            //DEBUG: console.log(msg_history.toString());
+        }
     });
 });
 
@@ -135,6 +137,16 @@ io.on('connection', function(socket){
 // function send_display_msg(msg){
 //     io.emit('chat', msg.italics());
 // }
+
+function add_to_msg_history(msg){
+    //if the msg_history array is at capacity
+    if(msg_history.length == msg_history_capacity){
+        //remove first element
+        msg_history.shift();
+    }
+    //add new msg to end of array
+    msg_history.push(msg);
+}
 
 
 /** 
