@@ -12,7 +12,7 @@ html{
 
 body { 
     font: 13px Helvetica, Arial; 
-    background: black;
+    background: rgb(12, 12, 12);
     /* border: 2px dashed red; */
     height: 100%;
     width: 100%;
@@ -25,6 +25,8 @@ div.left{
     width: 70%;
     float: left;
     padding: 30px;
+    padding-top: 10px;
+    padding-bottom: 40px;
     /* padding-right: 20px; */
     font-size: 1.2em;
 }
@@ -47,6 +49,8 @@ div.right{
     float:right;
     padding: 30px;
     padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 40px;
     font-size: 1.2em;
 }
 
@@ -135,6 +139,20 @@ form button:hover{
 }
 #users li { 
     padding: 5px 10px; 
+}
+
+#user-label{
+    /* border: 2px solid blue;  */
+    color: #41EAD4;
+    font-weight: lighter;
+    float:left;
+    margin-left: 0.75em;
+}
+
+h2.display-header{
+    /* border: 2px solid blue;  */
+    color: #41EAD4;
+    float:left;
 }
 /*
 Code for changing background colour of every 2nd msg 

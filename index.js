@@ -49,6 +49,7 @@ io.on('connection', function(socket){
             socket.emit('assign_cookie', socket.nickname, socket.color);
             socket.emit('display_msg', "You are " + socket.nickname.fontcolor(socket.color));
         }
+        socket.emit('display_uname', socket.nickname, socket.color);
         // emits to everyone but the connecting user
         socket.broadcast.emit('display_msg', socket.nickname.fontcolor(socket.color) + " connected");
         //emits back to only the same user
@@ -148,14 +149,30 @@ function generate_nickname(){
     var valid_un = false;
     var new_nickname = null;
     while(true){
-        var rug = require('random-username-generator');
-        new_nickname = rug.generate();
+        new_nickname = nickname_randomizer();
         // if username successfully added
         if(add_to_users(new_nickname)){
             break;
         }
     }
     return new_nickname;
+}
+
+function nickname_randomizer(){
+    var a = [ "amazing", "antagonistic", "small", "blue", "ugly", "draconian","dramatic","dreary","drunk",
+    "dry","dull","dusty","dynamic","helpless","hesitant","hideous", "jumpy","juvenile","keen","kind", 
+    "unsightly","unsuitable","untidy", "stupid","sturdy","subdued","subsequent","substantial","successful", 
+    "tacky","talented","tall","tame","tan","tangible","quarrelsome","questionable","quick", "unarmed",
+    "unbecoming"];
+
+    var b = ["aeroplane", "adult", "bear", "dog", "banana", "criminal", "canadian", "cancer", "crocodile", 
+    "croissant", "crook", "enemy", "engine", "engineer", "guitar", "gum", "gun", "pet", "pharmacist", 
+    "pheasant", "pencil", "pendulum", "pentagon", "salesman", "salmon","appendix", "apple", "appliance",
+    "diamond", "diaphragm","giant", "giraffe", "girdle", "girl", "toy", "tractor","zebra", "zephyr"];
+
+    var rA = Math.floor(Math.random()*a.length);
+    var rB = Math.floor(Math.random()*b.length);
+    return a[rA] + "-" + b[rB];
 }
 
 /**

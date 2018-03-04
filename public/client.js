@@ -33,6 +33,12 @@ $(function() {
         updateScroll();
     });
 
+    socket.on('display_uname', function(nickname, color){
+        var ulabel = document.getElementById("user-label");
+        ulabel.textContent = nickname;
+        ulabel.style.color = color;
+    });
+
     socket.on('user_list_update', function(current_users){
         update_user_list(current_users);
     });
