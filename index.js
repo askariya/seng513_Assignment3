@@ -59,7 +59,7 @@ io.on('connection', function(socket){
     socket.on('nick_change_request', function(nick_msg){
         var nick = nick_msg.substring(6).trim();
         // if nickname is empty, ignore
-        if(nick == ""){
+        if(nick == "" || nick.length > 12){
             socket.emit('display_msg', "Request Failed: Invalid Nickname");
         }
         else{
@@ -69,6 +69,8 @@ io.on('connection', function(socket){
                 current_users[current_users.indexOf(socket.nickname)] = nick;
                 socket.nickname = nick; 
                 socket.emit('assign_cookie', socket.nickname, socket.color);
+                //display new username
+                socket.emit('display_uname', socket.nickname, socket.color);
                 socket.emit('display_msg', "Your nickname is now: " + socket.nickname);
                 //update the user list
                 io.emit('user_list_update', Object(current_users));

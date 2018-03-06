@@ -64,6 +64,7 @@ type of message to send to the server
 */
 function parse_msg(msg, socket){
 
+    msg = escapeHtml(msg);
     // what to do upon nickname change request
     if(msg.startsWith("/nick ")){
         socket.emit('nick_change_request', msg);
@@ -107,6 +108,16 @@ function get_cookie(name) {
 function delete_cookie(name) {
     document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 };
+
+
+//function to escape HTML from: 
+//https://stackoverflow.com/questions/24816/escaping-html-strings-with-jquery
+function escapeHtml(text) {
+    'use strict';
+    return text.replace(/[\"&<>]/g, function (a) {
+        return { '"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;' }[a];
+    });
+}
 
 //TODO DELETE
 // function read_ul(){
